@@ -14,21 +14,21 @@ index 4a4c5ce..c62053a 100644
        {{ else }}
        - |
 diff --git a/kernel/prepare/pkg.yaml b/kernel/prepare/pkg.yaml
-index d19d6bb..f8580b8 100644
+index d19d6bb..8f63248 100644
 --- a/kernel/prepare/pkg.yaml
 +++ b/kernel/prepare/pkg.yaml
 @@ -9,6 +9,10 @@ steps:
          destination: linux.tar.xz
          sha256: "{{ .linux_sha256 }}"
          sha512: "{{ .linux_sha512 }}"
-+      - url: https://github.com/t2linux/linux-t2-patches/archive/0d1e1094a6200579e400e5ca493562c31f7b715a.tar.gz
++      - url: https://github.com/t2linux/linux-t2-patches/archive/539eea1f9127f1623794ee8c7ccc37e8b00f60a3.tar.gz
 +        destination: patches.tar.gz
-+        sha256: 54b9b1b15550622c024e788c3fb6944abe751154f6f10a984c134c5e87d7e0d4
-+        sha512: ea5767ef9eb9598bff803a926db80dc7021cceb92856866e161bb27af824406ceb765ce5c44361bd9f61c6b1be42fa48fc6ef1f6cb461794b4036a0df1025fa5
++        sha256: 214e38db854f3d169502a2dedf7ad6f676283e6cf458e071ac07fe8e01bd5003
++        sha512: dba60884aa590044ade273adda42761e1fd9f00ed84f1283c01d32117aa2aea68de66256c42c5ad3f190424482b03b91ded093fb275a39be90a9ad50dd2ff39d
      env:
        ARCH: {{ if eq .ARCH "aarch64"}}arm64{{ else if eq .ARCH "x86_64" }}x86_64{{ else }}unsupported{{ end }}
      prepare:
-@@ -33,6 +37,19 @@ steps:
+@@ -33,6 +37,14 @@ steps:
          ln -s /toolchain/include /usr/include
  
          make mrproper
@@ -37,11 +37,6 @@ index d19d6bb..f8580b8 100644
 +        tar xf patches.tar.gz --strip-components=1 -C /pkg/patches
 +      - |
 +        while IFS= read -r file; do
-+          # Ignore 1002-Put-apple-bce-in-drivers-staging.patch due to kernel 6.12 incompat
-+          if [[ "$(basename "$file")" == "1002-Put-apple-bce-in-drivers-staging.patch" ]]; then
-+            echo "Ignoring $file"
-+            continue
-+          fi
 +          echo "==> Adding $file"
 +          patch -p1 < "$file"
 +        done < <(find "/pkg/patches/" -type f -name "*.patch" | sort)
