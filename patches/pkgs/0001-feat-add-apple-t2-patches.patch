@@ -1,31 +1,20 @@
-From 46161fffa7dc9a891b963de4a83931798e22ff6c Mon Sep 17 00:00:00 2001
-From: Steven Kreitzer <skre@skre.me>
-Date: Mon, 23 Sep 2024 10:55:12 -0500
-Subject: [PATCH] feat: add apple t2 patches
-
----
- kernel/build/pkg.yaml   |  5 +++++
- kernel/prepare/pkg.yaml | 12 ++++++++++++
- 2 files changed, 17 insertions(+)
-
 diff --git a/kernel/build/pkg.yaml b/kernel/build/pkg.yaml
-index 4a4c5ce..29ebff1 100644
+index 4a4c5ce..c62053a 100644
 --- a/kernel/build/pkg.yaml
 +++ b/kernel/build/pkg.yaml
-@@ -17,6 +17,11 @@ steps:
-         for patch in $(find /pkg/patches -type f -name "*.patch" | sort); do
-           patch -p1 < $patch || (echo "Failed to apply patch $patch" && exit 1)
-         done
-+      - |
-+        cd /src
+@@ -21,7 +21,9 @@ steps:
+       {{ if .BUILD_ARG_KERNEL_TARGET }}
+       - |
+         cd /src
+-
 +        scripts/config --enable CONFIG_SENSORS_APPLESMC
 +        scripts/config --enable CONFIG_USB4
 +        scripts/config --enable CONFIG_USB4_NET
-     build:
-       {{ if .BUILD_ARG_KERNEL_TARGET }}
+         make {{ .BUILD_ARG_KERNEL_TARGET }}
+       {{ else }}
        - |
 diff --git a/kernel/prepare/pkg.yaml b/kernel/prepare/pkg.yaml
-index f82ddcf..8f8f633 100644
+index d19d6bb..f9dd033 100644
 --- a/kernel/prepare/pkg.yaml
 +++ b/kernel/prepare/pkg.yaml
 @@ -9,6 +9,10 @@ steps:
@@ -39,8 +28,8 @@ index f82ddcf..8f8f633 100644
      env:
        ARCH: {{ if eq .ARCH "aarch64"}}arm64{{ else if eq .ARCH "x86_64" }}x86_64{{ else }}unsupported{{ end }}
      prepare:
-@@ -39,6 +43,14 @@ steps:
-         done
+@@ -33,6 +37,14 @@ steps:
+         ln -s /toolchain/include /usr/include
  
          make mrproper
 +      - |
@@ -54,6 +43,3 @@ index f82ddcf..8f8f633 100644
        - |
          cd /toolchain && git clone https://github.com/a13xp0p0v/kernel-hardening-checker.git
      install:
--- 
-2.46.0
-
