@@ -1,18 +1,8 @@
-From 2d374a1f9960ec2b69c0af2639908f8a06119143 Mon Sep 17 00:00:00 2001
-From: Steven Kreitzer <skre@skre.me>
-Date: Mon, 23 Sep 2024 15:29:54 -0500
-Subject: [PATCH] fix: large apple efi
-
----
- internal/pkg/partition/constants.go | 2 +-
- pkg/imager/profile/default.go       | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
 diff --git a/internal/pkg/partition/constants.go b/internal/pkg/partition/constants.go
-index 0f2c8d17f..756c4b101 100644
+index 81cc57768..9912a0626 100644
 --- a/internal/pkg/partition/constants.go
 +++ b/internal/pkg/partition/constants.go
-@@ -32,7 +32,7 @@ const (
+@@ -33,7 +33,7 @@ const (
  	MiB = 1024 * 1024
  	GiB = 1024 * MiB
  
@@ -34,6 +24,3 @@ index b780ff3ef..4acc7f04f 100644
  
  	// DefaultRAWDiskSize is the value we use for any non-metal images by default.
  	DefaultRAWDiskSize = 8192 * mib
--- 
-2.46.0
-
