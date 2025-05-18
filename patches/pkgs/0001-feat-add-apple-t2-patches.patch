@@ -36,6 +36,10 @@ index 6408110..6741a27 100644
 +        tar xf patches.tar.gz --strip-components=1 -C /pkg/patches
 +      - |
 +        while IFS= read -r file; do
++          if [[ "$(basename "$file")" == "1002-Put-apple-bce-in-drivers-staging.patch" ]]; then
++            echo "Ignoring $file"
++            continue
++          fi
 +          echo "==> Adding $file"
 +          patch -p1 < "$file"
 +        done < <(find "/pkg/patches/" -type f -name "*.patch" | sort)
