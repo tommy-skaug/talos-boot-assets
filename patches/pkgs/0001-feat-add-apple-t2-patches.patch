@@ -37,7 +37,7 @@ index 6408110..89dbcd9 100644
 +      - |
 +        while IFS= read -r file; do
 +          base_name=$(basename "$file")
-+          if [[ "$base_name" == "1002-Put-apple-bce-in-drivers-staging.patch" || "$base_name" == "1005-HID-hid-appletb-bl-add-driver-for-the-backlight-of-A.patch" ]]; then
++          if [[ "$base_name" == "1002-Put-apple-bce-in-drivers-staging.patch" || "$base_name" == "1005-HID-hid-appletb-bl-add-driver-for-the-backlight-of-A.patch" || "$base_name" == "1006-HID-hid-appletb-kbd-add-driver-for-the-keyboard-mode.patch"]]; then
 +            echo "Ignoring $file"
 +            continue
 +          fi
