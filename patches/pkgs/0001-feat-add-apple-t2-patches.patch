@@ -13,7 +13,7 @@ index f797dd4..bee9247 100644
        {{ else }}
        - |
 diff --git a/kernel/prepare/pkg.yaml b/kernel/prepare/pkg.yaml
-index 6408110..11d565a 100644
+index 6408110..89dbcd9 100644
 --- a/kernel/prepare/pkg.yaml
 +++ b/kernel/prepare/pkg.yaml
 @@ -13,6 +13,10 @@ steps:
@@ -27,7 +27,7 @@ index 6408110..11d565a 100644
      env:
        ARCH: {{ if eq .ARCH "aarch64"}}arm64{{ else if eq .ARCH "x86_64" }}x86_64{{ else }}unsupported{{ end }}
      prepare:
-@@ -22,6 +26,18 @@ steps:
+@@ -22,6 +26,19 @@ steps:
  
          cd /src
          make mrproper
@@ -36,7 +36,8 @@ index 6408110..11d565a 100644
 +        tar xf patches.tar.gz --strip-components=1 -C /pkg/patches
 +      - |
 +        while IFS= read -r file; do
-+          if [[ "$(basename "$file")" == "1002-Put-apple-bce-in-drivers-staging.patch" ]]; then
++          base_name=$(basename "$file")
++          if [[ "$base_name" == "1002-Put-apple-bce-in-drivers-staging.patch" || "$base_name" == "1005-HID-hid-appletb-bl-add-driver-for-the-backlight-of-A.patch" ]]; then
 +            echo "Ignoring $file"
 +            continue
 +          fi
