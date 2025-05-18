@@ -22,8 +22,8 @@ index 6408110..7e3b924 100644
          sha512: "{{ .kspp_sha512 }}"
 +      - url: https://github.com/t2linux/linux-t2-patches/archive/18d846554c619b8ae49bda47aa7e268ed9ce228c.tar.gz
 +        destination: patches.tar.gz
-+        sha256: "{{ .patches_sha256 }}"
-+        sha512: "{{ .patches_sha512 }}"
++        sha256: "89cc95daf22612e1660e5d89ccdd14cb07edc8969ed5bb53862c4c6eb3f8e72a"
++        sha512: "8b8827da05ba72ca8181d9f56b3ad61a7bb9a0e7859aa9a4f3283f5c28b8cada9eb993de57b84ada6024b6cad5bf820fb01e05456f788458efccc9746d4fb761"
      env:
        ARCH: {{ if eq .ARCH "aarch64"}}arm64{{ else if eq .ARCH "x86_64" }}x86_64{{ else }}unsupported{{ end }}
      prepare:
