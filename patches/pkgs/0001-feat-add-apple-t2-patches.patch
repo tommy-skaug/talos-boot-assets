@@ -13,7 +13,7 @@ index f797dd4..bee9247 100644
        {{ else }}
        - |
 diff --git a/kernel/prepare/pkg.yaml b/kernel/prepare/pkg.yaml
-index 6408110..6741a27 100644
+index 6408110..11d565a 100644
 --- a/kernel/prepare/pkg.yaml
 +++ b/kernel/prepare/pkg.yaml
 @@ -13,6 +13,10 @@ steps:
@@ -27,7 +27,7 @@ index 6408110..6741a27 100644
      env:
        ARCH: {{ if eq .ARCH "aarch64"}}arm64{{ else if eq .ARCH "x86_64" }}x86_64{{ else }}unsupported{{ end }}
      prepare:
-@@ -22,6 +26,14 @@ steps:
+@@ -22,6 +26,18 @@ steps:
  
          cd /src
          make mrproper
