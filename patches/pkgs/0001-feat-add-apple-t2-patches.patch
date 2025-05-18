@@ -20,10 +20,10 @@ index 6408110..6741a27 100644
          destination: kspp.tar.gz
          sha256: "{{ .kspp_sha256 }}"
          sha512: "{{ .kspp_sha512 }}"
-+      - url: https://github.com/t2linux/linux-t2-patches/zipball/6.12
++      - url: https://github.com/t2linux/linux-t2-patches/archive/539eea1f9127f1623794ee8c7ccc37e8b00f60a3.tar.gz
 +        destination: patches.tar.gz
-+        sha256: "97cfd22f722d6df45f9a2a5093344c17983e192bcc416db58aec674ee658bb2b"
-+        sha512: "f034af4fd4ef1c041246831945333e5603557ef4fe8de897070ceea12e61b5efda99f708c58565482d4f12b46b698c74593dd9fc7d7a01debadf7471f85ed393"
++        sha256: "214e38db854f3d169502a2dedf7ad6f676283e6cf458e071ac07fe8e01bd5003"
++        sha512: "dba60884aa590044ade273adda42761e1fd9f00ed84f1283c01d32117aa2aea68de66256c42c5ad3f190424482b03b91ded093fb275a39be90a9ad50dd2ff39d"
      env:
        ARCH: {{ if eq .ARCH "aarch64"}}arm64{{ else if eq .ARCH "x86_64" }}x86_64{{ else }}unsupported{{ end }}
      prepare:
