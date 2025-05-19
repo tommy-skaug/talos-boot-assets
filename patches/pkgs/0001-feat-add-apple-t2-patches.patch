@@ -13,7 +13,7 @@ index f797dd4..bee9247 100644
        {{ else }}
        - |
 diff --git a/kernel/prepare/pkg.yaml b/kernel/prepare/pkg.yaml
-index 6408110..14cff7b 100644
+index 6408110..975aea8 100644
 --- a/kernel/prepare/pkg.yaml
 +++ b/kernel/prepare/pkg.yaml
 @@ -13,6 +13,10 @@ steps:
@@ -27,7 +27,7 @@ index 6408110..14cff7b 100644
      env:
        ARCH: {{ if eq .ARCH "aarch64"}}arm64{{ else if eq .ARCH "x86_64" }}x86_64{{ else }}unsupported{{ end }}
      prepare:
-@@ -22,6 +26,19 @@ steps:
+@@ -22,6 +26,33 @@ steps:
  
          cd /src
          make mrproper
@@ -35,12 +35,26 @@ index 6408110..14cff7b 100644
 +        mkdir -p /pkg/patches
 +        tar xf patches.tar.gz --strip-components=1 -C /pkg/patches
 +      - |
++        # Define excluded patches to make maintenance easier
++        declare -a EXCLUDED_PATCHES=(
++          "1002-Put-apple-bce-in-drivers-staging.patch"
++          "1005-HID-hid-appletb-bl-add-driver-for-the-backlight-of-A.patch"
++          "1006-HID-hid-appletb-kbd-add-driver-for-the-keyboard-mode.patch"
++          "1007-HID-multitouch-support-getting-the-contact-ID-from.patch"
++          "1008-HID-multitouch-support-getting-the-tip-state-from-HI.patch"
++          "1009-HID-multitouch-take-cls-maxcontacts-into-account-for.patch"
++        )
++        
 +        while IFS= read -r file; do
 +          base_name=$(basename "$file")
-+          if [[ "$base_name" == "1002-Put-apple-bce-in-drivers-staging.patch" || "$base_name" == "1005-HID-hid-appletb-bl-add-driver-for-the-backlight-of-A.patch" || "$base_name" == "1006-HID-hid-appletb-kbd-add-driver-for-the-keyboard-mode.patch" || "$base_name" == "1007-HID-multitouch-support-getting-the-contact-ID-from.patch" || "$base_name" == "1008-HID-multitouch-support-getting-the-tip-state-from-HI.patch" ]]; then
-+            echo "Ignoring $file"
-+            continue
-+          fi
++          # Check if patch should be excluded
++          for excluded in "${EXCLUDED_PATCHES[@]}"; do
++            if [[ "$base_name" == "$excluded" ]]; then
++              echo "Ignoring $file"
++              continue 2  # Skip to next file in outer loop
++            fi
++          done
++          
 +          echo "==> Adding $file"
 +          patch -p1 < "$file"
 +        done < <(find "/pkg/patches/" -type f -name "*.patch" | sort)
