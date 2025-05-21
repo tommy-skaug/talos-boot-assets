@@ -13,7 +13,7 @@ index f797dd4..bee9247 100644
        {{ else }}
        - |
 diff --git a/kernel/prepare/pkg.yaml b/kernel/prepare/pkg.yaml
-index 6408110..d13cc68 100644
+index 6408110..c29d378 100644
 --- a/kernel/prepare/pkg.yaml
 +++ b/kernel/prepare/pkg.yaml
 @@ -13,6 +13,10 @@ steps:
@@ -27,7 +27,7 @@ index 6408110..d13cc68 100644
      env:
        ARCH: {{ if eq .ARCH "aarch64"}}arm64{{ else if eq .ARCH "x86_64" }}x86_64{{ else }}unsupported{{ end }}
      prepare:
-@@ -22,6 +26,34 @@ steps:
+@@ -22,6 +26,35 @@ steps:
  
          cd /src
          make mrproper
@@ -44,6 +44,7 @@ index 6408110..d13cc68 100644
 +          "1008-HID-multitouch-support-getting-the-tip-state-from-HI.patch"
 +          "1009-HID-multitouch-take-cls-maxcontacts-into-account-for.patch"
 +          "1010-HID-multitouch-allow-specifying-if-a-device-is-direc.patch"
++          "1011-HID-multitouch-add-device-ID-for-Apple-Touch-Bars.patch"
 +        )
 +        
 +        while IFS= read -r file; do
