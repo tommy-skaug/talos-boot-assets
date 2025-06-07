@@ -1,19 +1,21 @@
 diff --git a/kernel/build/pkg.yaml b/kernel/build/pkg.yaml
-index f797dd4..bee9247 100644
+index f797dd4..5dea289 100644
 --- a/kernel/build/pkg.yaml
 +++ b/kernel/build/pkg.yaml
-@@ -23,6 +23,9 @@ steps:
-       - |
-         cd /src
- 
+@@ -18,6 +18,11 @@ steps:
+           patch -p1 < $patch || (echo "Failed to apply patch $patch" && exit 1)
+           echo "Applied patch $patch"
+         done
++      - |
++        cd /src
 +        scripts/config --enable CONFIG_SENSORS_APPLESMC
 +        scripts/config --enable CONFIG_USB4
 +        scripts/config --enable CONFIG_USB4_NET
-         make {{ .BUILD_ARG_KERNEL_TARGET }}
-       {{ else }}
+     build:
+       {{ if .BUILD_ARG_KERNEL_TARGET }}
        - |
 diff --git a/kernel/prepare/pkg.yaml b/kernel/prepare/pkg.yaml
-index 6408110..aa820fd 100644
+index 6408110..6b294fb 100644
 --- a/kernel/prepare/pkg.yaml
 +++ b/kernel/prepare/pkg.yaml
 @@ -13,6 +13,10 @@ steps:
@@ -27,7 +29,7 @@ index 6408110..aa820fd 100644
      env:
        ARCH: {{ if eq .ARCH "aarch64"}}arm64{{ else if eq .ARCH "x86_64" }}x86_64{{ else }}unsupported{{ end }}
      prepare:
-@@ -22,6 +26,36 @@ steps:
+@@ -22,6 +26,45 @@ steps:
  
          cd /src
          make mrproper
@@ -35,32 +37,41 @@ index 6408110..aa820fd 100644
 +        mkdir -p /pkg/patches
 +        tar xf patches.tar.gz --strip-components=1 -C /pkg/patches
 +      - |
-+        # Define excluded patches to make maintenance easier
-+        declare -a EXCLUDED_PATCHES=(
-+          "1002-Put-apple-bce-in-drivers-staging.patch"
-+          "1005-HID-hid-appletb-bl-add-driver-for-the-backlight-of-A.patch"
-+          "1006-HID-hid-appletb-kbd-add-driver-for-the-keyboard-mode.patch"
-+          "1007-HID-multitouch-support-getting-the-contact-ID-from.patch"
-+          "1008-HID-multitouch-support-getting-the-tip-state-from-HI.patch"
-+          "1009-HID-multitouch-take-cls-maxcontacts-into-account-for.patch"
-+          "1010-HID-multitouch-allow-specifying-if-a-device-is-direc.patch"
-+          "1011-HID-multitouch-add-device-ID-for-Apple-Touch-Bars.patch"
-+          "1012-lib-vsprintf-Add-support-for-generic-FOURCCs-by-exte.patch"
-+        )
-+        
-+        while IFS= read -r file; do
-+          base_name=$(basename "$file")
-+          # Check if patch should be excluded
-+          for excluded in "${EXCLUDED_PATCHES[@]}"; do
-+            if [[ "$base_name" == "$excluded" ]]; then
-+              echo "Ignoring $file"
-+              continue 2  # Skip to next file in outer loop
++        # Summary counters
++        APPLIED_COUNT=0
++        ALREADY_APPLIED_COUNT=0
++        FAILED_COUNT=0
++        SKIPPED_COUNT=0
++
++        # Apply all patches except the problematic ones
++        while IFS= read -r patch_file; do
++          base_name=$(basename "$patch_file")
++
++          # Capture git apply output to detect already applied patches
++          if output=$(git apply -v "$patch_file" 2>&1); then
++            echo "Applied ${base_name}"
++            APPLIED_COUNT=$((APPLIED_COUNT + 1))
++          else
++            # Check if the failure is because the patch was already applied
++            if echo "$output" | grep -q "already exists in working directory"; then
++              echo "✓ Already applied ${base_name}"
++              ALREADY_APPLIED_COUNT=$((ALREADY_APPLIED_COUNT + 1))
++            else
++              echo "Failed to apply ${base_name}"
++              FAILED_COUNT=$((FAILED_COUNT + 1))
++              # Don't exit on failure, continue with other patches
 +            fi
-+          done
-+          
-+          echo "==> Adding $file"
-+          patch -p1 < "$file"
++          fi
 +        done < <(find "/pkg/patches/" -type f -name "*.patch" | sort)
++
++        # Print summary
++        echo ""
++        echo "Patching summary:"
++        echo "Applied: $APPLIED_COUNT patches"
++        echo "Already applied: $ALREADY_APPLIED_COUNT patches" 
++        echo "Skipped: $SKIPPED_COUNT patches"
++        echo "Failed: $FAILED_COUNT patches"
++        echo ""
        - |
          mkdir -p /toolchain/kernel-hardening-checker
          tar -xzf kspp.tar.gz --strip-components=1 -C /toolchain/kernel-hardening-checker
