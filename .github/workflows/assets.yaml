@@ -8,8 +8,8 @@ on:
         description: Talos version
         default: latest
         required: false
-    # schedule:
-    # - cron: "0 * * * *"
+  schedule:
+    - cron: "0 * * * *"
 
 concurrency:
   group: ${{ github.actor }}-build
@@ -24,7 +24,7 @@ env:
 jobs:
   check-releases:
     name: Check for new releases
-    runs-on: ci-os
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
