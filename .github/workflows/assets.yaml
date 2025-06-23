@@ -157,11 +157,25 @@ jobs:
 
     - name: Build kernel image
       run: |
+        echo "Building kernel image with parameters:"
+        echo "  PLATFORM: linux/amd64"
+        echo "  USERNAME: ${{ github.actor }}"
+        echo "  TAG: ${{ needs.check-releases.outputs.talosReleaseTag }}"
+        echo "  PUSH: true"
+        
         make kernel \
           PLATFORM=linux/amd64 \
           USERNAME="${{ github.actor }}" \
           TAG="${{ needs.check-releases.outputs.talosReleaseTag }}" \
           PUSH="true"
+        
+        echo "✅ Kernel build completed"
+        
+    - name: Verify kernel image push
+      run: |
+        echo "Verifying kernel image was pushed successfully..."
+        docker manifest inspect ghcr.io/${{ github.actor }}/kernel:${{ needs.check-releases.outputs.talosReleaseTag }}
+        echo "✅ Kernel image successfully pushed to registry"
 
   build-installer:
     needs: [ check-releases, build-kernel ]
@@ -243,8 +257,25 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Verify kernel image exists
+      run: |
+        echo "Checking if kernel image exists..."
+        docker manifest inspect ghcr.io/${{ github.actor }}/kernel:${{ needs.check-releases.outputs.talosReleaseTag }} || {
+          echo "❌ Kernel image not found in registry!"
+          echo "Expected: ghcr.io/${{ github.actor }}/kernel:${{ needs.check-releases.outputs.talosReleaseTag }}"
+          exit 1
+        }
+        echo "✅ Kernel image found in registry"
+
     - name: Build installer image
       run: |
+        echo "Building installer image with parameters:"
+        echo "  PLATFORM: linux/amd64"
+        echo "  USERNAME: ${{ github.actor }}"
+        echo "  TAG: ${{ needs.check-releases.outputs.talosReleaseTag }}"
+        echo "  PKG_KERNEL: ghcr.io/${{ github.actor }}/kernel:${{ needs.check-releases.outputs.talosReleaseTag }}"
+        echo "  PUSH: true"
+        
         make installer \
           PLATFORM="linux/amd64" \
           USERNAME="${{ github.actor }}" \
